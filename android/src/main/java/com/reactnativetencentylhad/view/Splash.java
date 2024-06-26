@@ -22,7 +22,9 @@ public class Splash extends RelativeLayout {
     // 把布局加载到这个View里面
     inflate(context, R.layout.layout_splash, this);
     initView(posID, listener);
-    mSplashAD.fetchAndShowIn(container);
+//    mSplashAD.fetchAndShowIn(container);
+    mSplashAD.fetchFullScreenAdOnly();
+    mSplashAD.showFullScreenAd(container);
   }
 
   /**

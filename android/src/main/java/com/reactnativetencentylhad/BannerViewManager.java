@@ -67,19 +67,19 @@ public class BannerViewManager extends SimpleViewManager implements UnifiedBanne
     mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_WILL_LEAVE_APP.toString(), null);
   }
 
-  @Override
-  public void onADOpenOverlay() {
-    Log.e(TAG,"onADOpenOverlay");
-    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_WILL_OPEN_FULL_SCREEN.toString(), null);
-    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_DID_OPEN_FULL_SCREEN.toString(), null);
-  }
-
-  @Override
-  public void onADCloseOverlay() {
-    Log.e(TAG,"onADCloseOverlay");
-    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_WILL_CLOSE_FULL_SCREEN.toString(), null);
-    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_DID_CLOSE_FULL_SCREEN.toString(), null);
-  }
+//  @Override
+//  public void onADOpenOverlay() {
+//    Log.e(TAG,"onADOpenOverlay");
+//    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_WILL_OPEN_FULL_SCREEN.toString(), null);
+//    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_DID_OPEN_FULL_SCREEN.toString(), null);
+//  }
+//
+//  @Override
+//  public void onADCloseOverlay() {
+//    Log.e(TAG,"onADCloseOverlay");
+//    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_WILL_CLOSE_FULL_SCREEN.toString(), null);
+//    mEventEmitter.receiveEvent(mContainer.getId(), Events.EVENT_DID_CLOSE_FULL_SCREEN.toString(), null);
+//  }
 
   public enum Events {
     EVENT_FAIL_TO_RECEIVED("onFailToReceived"),

@@ -15,6 +15,10 @@ type TencentYlhAdType = {
    */
   showFullScreenAD(posId: string): void;
   /**
+   * 激励广告
+   */
+  showRewardVideoAD(posId: string): Promise<void>;
+  /**
    * H5-SDK激励视频广告
    */
   openWeb(

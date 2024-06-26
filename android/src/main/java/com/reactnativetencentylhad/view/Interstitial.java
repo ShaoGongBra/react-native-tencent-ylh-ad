@@ -50,7 +50,8 @@ public class Interstitial implements UnifiedInterstitialADListener {
         this.iad.showFullScreenAD(mContext.getCurrentActivity());
       } else {
         if (asPopup){
-          this.iad.showAsPopupWindow();
+//          this.iad.showAsPopupWindow();
+          this.iad.show();
         } else {
           this.iad.show();
         }
@@ -76,6 +77,16 @@ public class Interstitial implements UnifiedInterstitialADListener {
   @Override
   public void onADClosed() {
     Log.e(TAG,"onADClosed");
+  }
+
+  @Override
+  public void onRenderSuccess() {
+
+  }
+
+  @Override
+  public void onRenderFail() {
+
   }
 
   @Override

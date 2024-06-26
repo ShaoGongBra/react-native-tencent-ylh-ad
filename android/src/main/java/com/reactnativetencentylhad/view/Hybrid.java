@@ -11,7 +11,7 @@ import com.facebook.react.bridge.ReadableType;
 import com.qq.e.ads.hybrid.HybridAD;
 import com.qq.e.ads.hybrid.HybridADListener;
 import com.qq.e.ads.hybrid.HybridADSetting;
-import com.qq.e.comm.managers.GDTADManager;
+//import com.qq.e.comm.managers.GDTADManager;
 import com.qq.e.comm.util.AdError;
 import com.reactnativetencentylhad.util.ReflectionUtils;
 

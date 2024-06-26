@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import com.qq.e.ads.banner2.UnifiedBannerView;
 import com.qq.e.ads.banner2.UnifiedBannerADListener;
-import com.qq.e.comm.managers.GDTADManager;
+//import com.qq.e.comm.managers.GDTADManager;
 import com.reactnativetencentylhad.R;
 
 /**
