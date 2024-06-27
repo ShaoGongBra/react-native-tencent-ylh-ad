@@ -14,7 +14,7 @@ class TencentYlhAdPackage : ReactPackage {
         return listOf(
           SplashViewManager(),
           BannerViewManager(),
-//          NativeExpressViewManager()
+          NativeExpressViewManager()
         )
     }
 }

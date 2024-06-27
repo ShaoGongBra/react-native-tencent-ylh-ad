@@ -66,7 +66,7 @@ export default class NativeExpress extends PureComponent<Props, State> {
     this.instance.setNativeProps({
       style: {
         width: screenWith,
-        height: (event.nativeEvent.height * screenWith) / width,
+        height: (event.nativeEvent.height * screenWith) / (width || screenWith),
       },
     });
     this.props.onRender && this.props.onRender(event.nativeEvent);

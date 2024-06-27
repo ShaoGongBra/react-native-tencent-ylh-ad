@@ -2,6 +2,7 @@ package com.reactnativetencentylhad
 
 import android.util.Log
 import com.facebook.react.bridge.*
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.qq.e.ads.rewardvideo.RewardVideoAD
 import com.qq.e.comm.managers.GDTAdSdk
 import com.qq.e.comm.util.AdError
@@ -11,9 +12,16 @@ import com.reactnativetencentylhad.view.Interstitial
 
 class TencentYlhAdModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   private var appId: String = "";
+  private var context: ReactApplicationContext = reactContext
 
   override fun getName(): String {
     return "TencentYlhAd"
+  }
+
+  private fun sendEvent(eventName: String, params: WritableMap?) {
+    context
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(eventName, params)
   }
 
   /**
@@ -23,24 +31,21 @@ class TencentYlhAdModule(reactContext: ReactApplicationContext) : ReactContextBa
   fun registerAppId(appId: String, promise: Promise) {
     this.appId = appId;
     GDTAdSdk.initWithoutStart(reactApplicationContext, appId);
-    GDTAdSdk.start(OnStartListener() {
-       fun onStartSuccess() {
-        // 推荐开发者在onStartSuccess回调后开始拉广告
+
+
+    class OnStartListener: GDTAdSdk.OnStartListener {
+      override fun onStartSuccess() {
         promise.resolve(null)
       }
 
-      fun onStartFailed(e: Exception) {
-        Log.e("gdt onStartFailed:", e.toString());
-        promise.reject("-1", e.toString())
+      override fun onStartFailed(p0: java.lang.Exception?) {
+        Log.e("gdt onStartFailed:", p0.toString());
+        promise.reject("-1", p0.toString())
       }
-    })
 
-//    val result = gdt.getInstance().initWith(reactApplicationContext, appId)
-//    if (result) {
-//      promise.resolve(null)
-//    } else{
-//      promise.reject("-1", "")
-//    }
+    }
+
+    GDTAdSdk.start(OnStartListener())
   }
 
   /**
@@ -75,10 +80,10 @@ class TencentYlhAdModule(reactContext: ReactApplicationContext) : ReactContextBa
    * 激励广告
    */
   @ReactMethod
-  fun showRewardVideoAD(posId: String, promise: Promise) {
+  fun showRewardVideoAD(posId: String) {
     val listener = RewardVideoADListener()
     rewardVideoAD = RewardVideoAD(reactApplicationContext, posId, listener)
-    listener.setConfig(rewardVideoAD, promise)
+    listener.setConfig(rewardVideoAD, ::sendEvent)
     rewardVideoAD.loadAD()
   }
 
@@ -86,17 +91,17 @@ class TencentYlhAdModule(reactContext: ReactApplicationContext) : ReactContextBa
 
     private lateinit var rewardVideoAD: RewardVideoAD
 
-    private lateinit var promise: Promise
+    private lateinit var sendEvent: (eventName: String, params: WritableMap?) -> Unit
 
-    private var result: MutableMap<String, Any>? = null
-
-    fun setConfig (ad: RewardVideoAD, p: Promise) {
+    fun setConfig (ad: RewardVideoAD, send: (eventName: String, params: WritableMap?) -> Unit) {
       rewardVideoAD = ad
-      promise = p
+      sendEvent = send
     }
 
     override fun onADLoad() {
-      Log.d("ylh-ad", "广告加载")
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onADLoad")
+      })
       if(rewardVideoAD.isValid) {
         rewardVideoAD.showAD()
       } else {
@@ -105,7 +110,9 @@ class TencentYlhAdModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     override fun onVideoCached() {
-      Log.d("ylh-ad", "广告缓存")
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onVideoCached")
+      })
       if(rewardVideoAD.isValid) {
         rewardVideoAD.showAD()
       } else {
@@ -114,51 +121,50 @@ class TencentYlhAdModule(reactContext: ReactApplicationContext) : ReactContextBa
     }
 
     override fun onADShow() {
-      Log.d("ylh-ad", "广告显示")
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onADShow")
+      })
     }
 
     override fun onADExpose() {
-      Log.d("ylh-ad", "广告曝光")
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onADExpose")
+      })
     }
 
     override fun onReward(p0: MutableMap<String, Any>?) {
-      Log.d("ylh-ad", "获得奖励")
-      if (p0 != null) {
-        result = p0
-      }
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onReward")
+        putString("transId", p0!!["transId"].toString())
+      })
     }
 
     override fun onADClick() {
-      Log.d("ylh-ad", "广告点击")
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onADClick")
+      })
     }
 
     override fun onVideoComplete() {
-      Log.d("ylh-ad", "播放完成")
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onADClose")
+      })
     }
 
     override fun onADClose() {
-      Log.d("ylh-ad", "关闭广告")
-      if(result != null) {
-        promise.resolve(result.toString())
-      } else {
-        promise.reject("-2", "关闭广告")
-      }
-
+      sendEvent("rewardVideo", Arguments.createMap().apply {
+        putString("type", "onADClose")
+      })
     }
 
     override fun onError(p0: AdError?) {
-      promise.reject("-1", p0.toString())
+      val map = Arguments.createMap()
+      map.putString("type", "onError")
+      if (p0 != null) {
+        map.putInt("errorCode", p0.errorCode)
+        map.putString("errorMsg", p0.errorMsg)
+      }
+      sendEvent("rewardVideo", map)
     }
   }
-}
-
-class OnStartListener(function: () -> Unit) : GDTAdSdk.OnStartListener {
-  override fun onStartSuccess() {
-
-  }
-
-  override fun onStartFailed(p0: java.lang.Exception?) {
-
-  }
-
 }

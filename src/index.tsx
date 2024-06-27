@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
 type TencentYlhAdType = {
   /**
@@ -17,7 +17,7 @@ type TencentYlhAdType = {
   /**
    * 激励广告
    */
-  showRewardVideoAD(posId: string): Promise<void>;
+  showRewardVideoAD(posId: string): void;
   /**
    * H5-SDK激励视频广告
    */
@@ -46,3 +46,27 @@ export {
   default as NativeExpress,
   Props as NativeExpressProps,
 } from './NativeExpress';
+
+export const showRewardVideoAD = (option: {
+  posId: string,
+  onADLoad?: () => void,
+  onVideoCached?: () => void,
+  onADShow?: () => void,
+  onADExpose?: () => void,
+  onReward?: () => void,
+  onADClick?: () => void,
+  onVideoComplete?: () => void,
+  onADClose?: () => void,
+  onError?: () => void,
+  [key: string]: any
+}) => {
+  TencentYlhAd.showRewardVideoAD(option.posId)
+  const eventEmitter = new NativeEventEmitter(NativeModules.TencentYlhAd)
+
+  const eventListener = eventEmitter.addListener('rewardVideo', (event: { type: string }) => {
+    option[event.type]?.(event)
+    if (['onError', 'onADClose', 'onADClick'].includes(event.type)) {
+      eventListener.remove()
+    }
+  })
+}
